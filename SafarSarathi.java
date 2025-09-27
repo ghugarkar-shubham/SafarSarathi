@@ -1,3 +1,4 @@
+package SafarSarathi;
 import java.util.Scanner;
 import java.util.ArrayList;
 class Driver{
@@ -11,7 +12,7 @@ class Driver{
 	}
 
 	public void getDriver(){
-		System.out.println("\n Driver Info");
+		System.out.println("\n  DRIVER INFO  \n");
 		System.out.println("Driver name : "+name);
 		System.out.println("Contact : "+contact+"\n");
 	}
@@ -50,7 +51,7 @@ class Cab{
  	}
 
  	public void getCabDetails(){
- 		System.out.println("\n CAB DETAILS ");
+ 		System.out.println("\n  CAB DETAILS  \n");
  		System.out.println("Uber Id : "+uberId);
  		System.out.println("Location : "+location);
  		System.out.println("Status : "+status);
@@ -74,12 +75,82 @@ class Cab{
  	public String getUberId(){
  		return uberId;
  	}
+ 	public int getCapacity(){
+ 		return capacity;
+ 	}
 }
 
-class Uber
-{
+class SafarSarathi{
 
-	ArrayList <String> list = new ArrayList<>;
+	public static void main(String[] args) {
+
+		Uber uber = new Uber();
+		uber.homeModule();
+	}
+}
+
+class Passenger{
+
+	private String name;
+	private long contact;
+	private String email;
+	private String pickUpLocation;
+	private String dropLocation;
+	private int seats;
+
+	Passenger(String name, long contact, String email, String pickUpLocation, String dropLocation, int seats)
+	{
+		super();
+		this.name = name;
+		this.contact = contact;
+		this.email = email;
+		this.pickUpLocation = pickUpLocation;
+		this.dropLocation = dropLocation;
+		this.seats = seats;
+	}
+	public String getName(){
+ 		return name;
+ 	}
+ 	public void setName(String newName){
+ 		this.name = newName;
+ 	}
+ 	public long getContact(){
+ 		return contact;
+ 	}
+ 	public void setContact(long newContact){
+ 		this.contact = newContact;
+ 	}
+ 	public String getEmail(){
+ 		return email;
+ 	}
+ 	public void setEmail(String newEmail){
+ 		this.email = newEmail;
+ 	}
+ 	public String getPick(){
+ 		return pickUpLocation;
+ 	}
+ 	public void setPick(String newPick){
+ 		this.pickUpLocation = newPick;
+ 	}
+ 	public String getDrop(){
+ 		return dropLocation;
+ 	}
+ 	public void setDrop(String newDrop){
+ 		this.dropLocation = newDrop;
+ 	}
+ 	public int getSeats(){
+ 		return seats;
+ 	}
+ 	public void setSeats(int newSeats){
+ 		this.seats = newSeats;
+ 	}
+}
+class Uber{
+
+	ArrayList <Cab> listCab = new ArrayList<>();
+	Passenger passenger;
+	Cab currentCab;
+
 	{
 		Cab cab1 = new Cab("MH-10-BF-2342", "sedan", new Driver("Ramesh Kumbhar", 9876543210L));
 		Cab cab2 = new Cab("MH-13-AA-4323", "hatchback", new Driver("Ganesh Kumar", 8799553210L));
@@ -90,36 +161,116 @@ class Uber
 		Cab cab7 = new Cab("MH-13-BS-1254", "sedan", new Driver("Durga Girme", 8257684335L));
 		Cab cab8 = new Cab("MH-12-BG-0988", "suv", new Driver("Nitin Gandhale", 9387532567L));
 
-		list.add(cab1);
-		list.add(cab2);
-		list.add(cab3);
-		list.add(cab4);
-		list.add(cab5);
-		list.add(cab6);
-		list.add(cab7);
-		list.add(cab8);
+		listCab.add(cab1);
+		listCab.add(cab2);
+		listCab.add(cab3);
+		listCab.add(cab4);
+		listCab.add(cab5);
+		listCab.add(cab6);
+		listCab.add(cab7);
+		listCab.add(cab8);
 	}
 
-	public void homeApplication()
+	{
+		System.out.println("\n  PASSENGER DETAILS  \n");
+		System.out.print("Name : ");
+		String name = new Scanner(System.in).nextLine();
+		System.out.print("Contatct : ");
+		long contact = new Scanner(System.in).nextLong();
+		System.out.print("Email : ");
+		String email = new Scanner(System.in).nextLine();
+		System.out.print("Pick Up Location : ");
+		String pickUpLocation = new Scanner(System.in).nextLine();
+		System.out.print("Drop Location : ");
+		String dropLocation = new Scanner(System.in).nextLine();
+		System.out.print("Seats : ");
+		int seats = new Scanner(System.in).nextInt();
+
+		if(seats >= 7){
+			System.out.println("\n  NO RIDES AVAILABLE FOR YOU  \n"); 
+			System.exit(0);
+		}
+
+		this.passenger = new Passenger(name, contact, email, pickUpLocation, dropLocation, seats);
+	}
+
+	public void homeModule()
 	{
 
-		for (; ; ) {
+		for (; ; ) 
+		{
 		
-		System.out.println("\n WEL-COME \n");
-		System.out.println("1. Book A Ride.");
-		System.out.println("2. Cancle A Ride.");
-		System.out.println("3. Rider History.");
-		System.out.println("4. LOGOUT");
-		System.out.print("\nEnter your responce : ");
-		int responce = new Scanner(System.in).nextInt();
+			System.out.println("\n  *** WEL-COME ***  \n");
+			System.out.println("1. Book A Ride.");
+			System.out.println("2. Cancle A Ride.");
+			System.out.println("3. Rider History.");
+			System.out.println("4. LOGOUT");
+			System.out.print("\nEnter your responce : ");
+			int responce = new Scanner(System.in).nextInt();
 
+			switch(responce){
+				case 1 -> bookRide();
+				case 2 -> cancleRide();
+				case 3 -> rideHistory();
+				case 4 -> {
+					System.out.println("\n  THANK YOU FOR VISITING UBER!!  \n");
+					System.exit(0);
+				}
+				default -> System.out.println("Invalid Responce.");
+			}
+		}
+	}		
+	public void bookRide()
+	{
+		System.out.println("\n  BOOK-A-RIDE MODULE  \n");
+		for (Cab element : listCab ) 
+		{
+			if(element.getStatus() == "AVAILABLE" && element.getCapacity() >= passenger.getSeats())	
+				element.getCabDetails();		
+		}
+
+		System.out.print("Enter an uberId : ");
+		String uberId = new Scanner(System.in).next();
+		boolean assump = false;
+
+		for(Cab ele : listCab)
+		{
+			if(ele.getUberId().equals(uberId))
+			{
+				System.out.println("\n  YOUR RIDE HAS BEEN CONFIRMED  \n");
+				currentCab = ele;
+				assump = true;
+				System.out.println("\nYour ride Details : ");
+				ele.getCabDetails();
+				System.out.println("Cab number : "+ele.getCabnumber());
+				ele.getDriver().getDriver();
+				break;
+			}	
+		}
+		if(!assump)
+			System.out.println("\n  INVALID UBERID  \n");
 	}
-}
-class SafarSarathi{
+	public void cancleRide()
+	{
+		if(currentCab == null){
+			System.out.println("\n  NO RIDE HAS BEEN BOOK  \n");
+			return;
+		}
+		System.out.println("\n  CANCLE-A-RIDE MODULE  \n");
+		System.out.println("\nYour ride Details : ");
+		currentCab.getCabDetails();
+		System.out.println("Cab number : "+currentCab.getCabnumber());
+		currentCab.getDriver();
 
-	public static void main(String[] args) {
-
-		Uber uber = new Uber();
-		uber.homeApplication();
+		System.out.print("\nDo you want to Cancle a ride (Yes/No) : ");
+		String response = new Scanner(System.in).next();
+		if(response.equalsIgnoreCase("Yes")){
+			System.out.println("\n  YOUR RIDE HAS BEEN CANCELED  \n");
+			currentCab = null;
+		}
+	}
+	public void rideHistory()
+	{
+		System.out.println("\nImplementation Soon........");
 	}
 }
