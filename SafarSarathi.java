@@ -84,7 +84,7 @@ class SafarSarathi{
 
 	public static void main(String[] args) {
 
-		Uber uber = new Uber();
+		SafarSarathiDriver uber = new SafarSarathiDriver();
 		uber.homeModule();
 	}
 }
@@ -145,11 +145,43 @@ class Passenger{
  		this.seats = newSeats;
  	}
 }
-class Uber{
 
+class Ride {
+    String passengerName;
+    String pickUp;
+    String drop;
+    String cabId;
+    double fare;
+    String status; 
+
+    Ride(String passengerName, String pickUp, String drop, String cabId, double fare, String status) {
+        this.passengerName = passengerName;
+        this.pickUp = pickUp;
+        this.drop = drop;
+        this.cabId = cabId;
+        this.fare = fare;
+        this.status = status;
+    }
+
+    public void showRide() {
+        System.out.println("\nRide Details\n");
+        System.out.printf("Passenger :%s  From :%s  To :%s  Cab :%s  Fare :%.2f rs  Status :%s",
+        	passengerName, pickUp, drop, cabId, fare, status);
+    }    
+}
+
+class SafarSarathiDriver{
+
+	String [] stops = {"DECCAN", "MANAPA", "SHIVAJINAGAR", "SANGAMWADI", "YERWADA"};
+	int [] distance = {0, 2, 4, 7, 9};
+
+	ArrayList <Ride> rideHistoryList = new ArrayList<>();
 	ArrayList <Cab> listCab = new ArrayList<>();
 	Passenger passenger;
 	Cab currentCab;
+	{
+		addPassenger();
+	}
 
 	{
 		Cab cab1 = new Cab("MH-10-BF-2342", "sedan", new Driver("Ramesh Kumbhar", 9876543210L));
@@ -171,7 +203,7 @@ class Uber{
 		listCab.add(cab8);
 	}
 
-	{
+	public void addPassenger(){
 		System.out.println("\n  PASSENGER DETAILS  \n");
 		System.out.print("Name : ");
 		String name = new Scanner(System.in).nextLine();
@@ -180,9 +212,9 @@ class Uber{
 		System.out.print("Email : ");
 		String email = new Scanner(System.in).nextLine();
 		System.out.print("Pick Up Location : ");
-		String pickUpLocation = new Scanner(System.in).nextLine();
+		String pickUpLocation = new Scanner(System.in).nextLine().toUpperCase();
 		System.out.print("Drop Location : ");
-		String dropLocation = new Scanner(System.in).nextLine();
+		String dropLocation = new Scanner(System.in).nextLine().toUpperCase();
 		System.out.print("Seats : ");
 		int seats = new Scanner(System.in).nextInt();
 
@@ -200,7 +232,7 @@ class Uber{
 		for (; ; ) 
 		{
 		
-			System.out.println("\n  *** WEL-COME ***  \n");
+			System.out.println("\n\n  *** WEL-COME ***  \n");
 			System.out.println("1. Book A Ride.");
 			System.out.println("2. Cancle A Ride.");
 			System.out.println("3. Rider History.");
@@ -213,15 +245,40 @@ class Uber{
 				case 2 -> cancleRide();
 				case 3 -> rideHistory();
 				case 4 -> {
-					System.out.println("\n  THANK YOU FOR VISITING UBER!!  \n");
+					System.out.println("\n  THANK YOU FOR VISITING SAFARSARTHI!!  \n");
 					System.exit(0);
 				}
 				default -> System.out.println("Invalid Responce.");
 			}
 		}
-	}		
+	}	
+	
+	public double caculateFair(String pickUp, String drop)
+	{
+		double fare = 0;
+		int pickupIndex = -1;
+		int dropIndex = -1;
+		int index = 0;
+		for(String point : stops)
+		{
+			if(pickUp.equals(point)){
+				pickupIndex = index;
+			}
+			if(drop.equals(point)){
+				dropIndex = index;
+			}
+			index++;
+		}
+		System.out.println("\nDistance : "+Math.abs(distance[dropIndex] - distance[pickupIndex])+" km");
+		fare = Math.abs(distance[dropIndex] - distance[pickupIndex])*30;
+		return fare;
+	}	
+
 	public void bookRide()
 	{
+		if(passenger == null){
+			addPassenger();
+		}
 		System.out.println("\n  BOOK-A-RIDE MODULE  \n");
 		for (Cab element : listCab ) 
 		{
@@ -244,6 +301,11 @@ class Uber{
 				ele.getCabDetails();
 				System.out.println("Cab number : "+ele.getCabnumber());
 				ele.getDriver().getDriver();
+				double fair = caculateFair(passenger.getPick(),passenger.getDrop());
+				System.out.println("Pick up : "+passenger.getPick());
+				System.out.println("Drop : "+passenger.getDrop());
+				System.out.println("\nFair is : "+fair+" rs\n");
+				rideHistoryList.add(new Ride(passenger.getName(), passenger.getPick(), passenger.getDrop(), ele.getUberId(), fair, "COMPLETED"));
 				break;
 			}	
 		}
@@ -266,11 +328,21 @@ class Uber{
 		String response = new Scanner(System.in).next();
 		if(response.equalsIgnoreCase("Yes")){
 			System.out.println("\n  YOUR RIDE HAS BEEN CANCELED  \n");
+			rideHistoryList.add(new Ride(passenger.getName(), passenger.getPick(), passenger.getDrop(), currentCab.getUberId(), 0, "CANCELED"));
 			currentCab = null;
+			passenger = null;
 		}
 	}
 	public void rideHistory()
 	{
-		System.out.println("\nImplementation Soon........");
+	    if (rideHistoryList.isEmpty()) {
+	        System.out.println("\nNo rides taken yet!\n");
+	        return;
+	    }
+
+	    System.out.println("\nRide History\n");
+	    for (Ride ride : rideHistoryList) {
+	        ride.showRide();
+	    }
 	}
 }
